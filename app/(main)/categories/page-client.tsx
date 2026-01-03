@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Edit, Trash2, Tag, ChevronRight, ChevronDown } from "lucide-react";
 import {
@@ -46,10 +46,15 @@ export default function CategoriesPageClient({
   initialCategories,
 }: CategoriesPageClientProps) {
   const router = useRouter();
-  const [categories] = useState<Category[]>(initialCategories);
+  const [categories, setCategories] = useState<Category[]>(initialCategories);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
     new Set()
   );
+
+  // Sync categories state with prop changes (when router.refresh() updates server data)
+  useEffect(() => {
+    setCategories(initialCategories);
+  }, [initialCategories]);
   const [categoryDialog, setCategoryDialog] = useState<{
     open: boolean;
     category?: Category;

@@ -80,6 +80,11 @@ export function SubCategoryForm({
         await createSubCategory(formData);
       }
 
+      // Reset form state
+      setName("");
+      setDescription("");
+      setSelectedCategoryId(initialCategoryId || "");
+      setIsSubmitting(false);
       onOpenChange(false);
       router.refresh();
     } catch (error) {

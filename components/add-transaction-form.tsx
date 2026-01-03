@@ -14,7 +14,6 @@ import {
   DialogDescription,
   DialogClose,
 } from "@/components/ui/dialog";
-import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { createTransaction } from "@/app/(main)/transactions/actions";
 import {
   TransactionType,
@@ -67,16 +66,30 @@ export function AddTransactionForm({
 }: AddTransactionFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [categories] = useState<Category[]>(initialCategories);
+  const [categories, setCategories] = useState<Category[]>(initialCategories);
+
+  // Sync categories state with prop changes
+  useEffect(() => {
+    setCategories(initialCategories);
+  }, [initialCategories]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [subCategories, setSubCategories] = useState<SubCategory[]>([]);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [selectedDate, setSelectedDate] = useState<string>(() => {
+    const now = new Date();
+    // Format as datetime-local string (YYYY-MM-DDTHH:mm)
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  });
   const [amount, setAmount] = useState<string>("");
-  const [currency, setCurrency] = useState<string>("USD");
+  const [currency, setCurrency] = useState<string>("INR");
   const [transactionType, setTransactionType] = useState<TransactionType>(TransactionType.EXPENSE);
   const [status, setStatus] = useState<TransactionStatus>(TransactionStatus.COMPLETED);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | "">("");
-  const [bankAccountName, setBankAccountName] = useState<BankAccountName | "">("");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(PaymentMethod.UPI);
+  const [bankAccountName, setBankAccountName] = useState<BankAccountName>(BankAccountName.SBI_CARD);
   const [internalOpen, setInternalOpen] = useState(false);
 
   const open = controlledOpen ?? internalOpen;
@@ -102,22 +115,25 @@ export function AddTransactionForm({
       // Set transaction type, status, payment method, and bank account based on selection
       formData.set("type", transactionType);
       formData.set("status", status);
-      if (paymentMethod) {
-        formData.set("paymentMethod", paymentMethod);
-      }
-      if (bankAccountName) {
-        formData.set("bankAccountName", bankAccountName);
-      }
+      formData.set("paymentMethod", paymentMethod);
+      formData.set("bankAccountName", bankAccountName);
       await createTransaction(formData);
-      setOpen(false);
       // Reset form
       setAmount("");
-      setSelectedDate(new Date());
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      setSelectedDate(`${year}-${month}-${day}T${hours}:${minutes}`);
       setSelectedCategoryId("");
       setTransactionType(TransactionType.EXPENSE);
       setStatus(TransactionStatus.COMPLETED);
-      setPaymentMethod("");
-      setBankAccountName("");
+      setPaymentMethod(PaymentMethod.UPI);
+      setBankAccountName(BankAccountName.SBI_CARD);
+      setIsSubmitting(false);
+      setOpen(false);
       router.refresh();
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -174,60 +190,60 @@ export function AddTransactionForm({
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <Button
                 type="button"
-                variant={transactionType === TransactionType.EXPENSE ? "default" : "outline"}
+                variant="outline"
                 className={`h-16 flex-col gap-2 ${transactionType === TransactionType.EXPENSE
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground"
+                  ? "bg-red-500 text-white border-red-500 hover:bg-red-500"
+                  : "bg-red-100 text-red-900 border-red-200 hover:bg-red-200"
                   }`}
                 onClick={() => setTransactionType(TransactionType.EXPENSE)}
               >
                 <ArrowDownLeft
-                  className={`h-5 w-5 ${transactionType === TransactionType.EXPENSE ? "text-red-400" : "text-muted-foreground"
+                  className={`h-5 w-5 ${transactionType === TransactionType.EXPENSE ? "text-white" : "text-red-600"
                     }`}
                 />
                 <span className="font-medium text-xs">Expense</span>
               </Button>
               <Button
                 type="button"
-                variant={transactionType === TransactionType.INCOME ? "default" : "outline"}
+                variant="outline"
                 className={`h-16 flex-col gap-2 ${transactionType === TransactionType.INCOME
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground"
+                  ? "bg-green-500 text-white border-green-500 hover:bg-green-500"
+                  : "bg-green-100 text-green-900 border-green-200 hover:bg-green-200"
                   }`}
                 onClick={() => setTransactionType(TransactionType.INCOME)}
               >
                 <ArrowUpRight
-                  className={`h-5 w-5 ${transactionType === TransactionType.INCOME ? "text-green-400" : "text-muted-foreground"
+                  className={`h-5 w-5 ${transactionType === TransactionType.INCOME ? "text-white" : "text-green-600"
                     }`}
                 />
                 <span className="font-medium text-xs">Income</span>
               </Button>
               <Button
                 type="button"
-                variant={transactionType === TransactionType.INVESTMENT ? "default" : "outline"}
+                variant="outline"
                 className={`h-16 flex-col gap-2 ${transactionType === TransactionType.INVESTMENT
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground"
+                  ? "bg-blue-500 text-white border-blue-500 hover:bg-blue-500"
+                  : "bg-blue-100 text-blue-900 border-blue-200 hover:bg-blue-200"
                   }`}
                 onClick={() => setTransactionType(TransactionType.INVESTMENT)}
               >
                 <ArrowUpRight
-                  className={`h-5 w-5 ${transactionType === TransactionType.INVESTMENT ? "text-blue-400" : "text-muted-foreground"
+                  className={`h-5 w-5 ${transactionType === TransactionType.INVESTMENT ? "text-white" : "text-blue-600"
                     }`}
                 />
                 <span className="font-medium text-xs">Investment</span>
               </Button>
               <Button
                 type="button"
-                variant={transactionType === TransactionType.TRANSFER ? "default" : "outline"}
+                variant="outline"
                 className={`h-16 flex-col gap-2 ${transactionType === TransactionType.TRANSFER
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground"
+                  ? "bg-purple-500 text-white border-purple-500 hover:bg-purple-500"
+                  : "bg-purple-100 text-purple-900 border-purple-200 hover:bg-purple-200"
                   }`}
                 onClick={() => setTransactionType(TransactionType.TRANSFER)}
               >
                 <ArrowDownLeft
-                  className={`h-5 w-5 ${transactionType === TransactionType.TRANSFER ? "text-purple-400" : "text-muted-foreground"
+                  className={`h-5 w-5 ${transactionType === TransactionType.TRANSFER ? "text-white" : "text-purple-600"
                     }`}
                 />
                 <span className="font-medium text-xs">Transfer</span>
@@ -241,15 +257,18 @@ export function AddTransactionForm({
             <div className="space-y-4">
               {/* Date */}
               <div className="space-y-2">
-                <Label className="flex items-center gap-2">
+                <Label htmlFor="date" className="flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
                   Date
                 </Label>
-                <DateTimePicker
+                <Input
+                  id="date"
                   name="date"
+                  type="datetime-local"
                   value={selectedDate}
-                  onChange={setSelectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
                   required
+                  className="w-full"
                 />
               </div>
 
@@ -292,9 +311,8 @@ export function AddTransactionForm({
                   name="paymentMethod"
                   className="w-full"
                   value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod | "")}
+                  onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
                 >
-                  <option value="">Select Payment Method</option>
                   {Object.values(PaymentMethod).map((method) => (
                     <option key={method} value={method}>
                       {getPaymentMethodLabel(method)}
@@ -364,9 +382,8 @@ export function AddTransactionForm({
                   name="bankAccountName"
                   className="w-full"
                   value={bankAccountName}
-                  onChange={(e) => setBankAccountName(e.target.value as BankAccountName | "")}
+                  onChange={(e) => setBankAccountName(e.target.value as BankAccountName)}
                 >
-                  <option value="">Select Bank Account</option>
                   {Object.values(BankAccountName).map((account) => (
                     <option key={account} value={account}>
                       {getBankAccountLabel(account)}

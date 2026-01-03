@@ -63,6 +63,10 @@ export function CategoryForm({
         await createCategory(formData);
       }
 
+      // Reset form state
+      setName("");
+      setDescription("");
+      setIsSubmitting(false);
       onOpenChange(false);
       router.refresh();
     } catch (error) {

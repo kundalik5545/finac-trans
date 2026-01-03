@@ -76,7 +76,12 @@ export default function EditTransactionForm({
 }: EditTransactionFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [categories] = useState<Category[]>(initialCategories);
+  const [categories, setCategories] = useState<Category[]>(initialCategories);
+
+  // Sync categories state with prop changes
+  useEffect(() => {
+    setCategories(initialCategories);
+  }, [initialCategories]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
     transaction.categoryId || ""
   );

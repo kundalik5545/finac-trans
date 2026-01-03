@@ -61,6 +61,13 @@ export function TransactionsTable({
   });
   const [isExporting, setIsExporting] = useState(false);
 
+  // Sync transactions and pagination state with prop changes (when router.refresh() updates server data)
+  useEffect(() => {
+    setTransactions(initialTransactions);
+    setPagination(initialPagination);
+    setCurrentPage(initialPagination.page);
+  }, [initialTransactions, initialPagination]);
+
   const fetchTransactions = async (page: number) => {
     try {
       const response = await fetch(`/api/transactions?page=${page}&pageSize=${pagination.pageSize}`);
