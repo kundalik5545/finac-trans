@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Edit, Trash2, Tag } from "lucide-react";
+import { Plus, Edit, Trash2, Tag, ChevronRight, ChevronDown } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -47,6 +47,9 @@ export default function CategoriesPageClient({
 }: CategoriesPageClientProps) {
   const router = useRouter();
   const [categories] = useState<Category[]>(initialCategories);
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
+    new Set()
+  );
   const [categoryDialog, setCategoryDialog] = useState<{
     open: boolean;
     category?: Category;
@@ -63,6 +66,18 @@ export default function CategoriesPageClient({
     name: string;
   }>({ open: false, type: "category", id: "", name: "" });
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const toggleCategory = (categoryId: string) => {
+    setExpandedCategories((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(categoryId)) {
+        newSet.delete(categoryId);
+      } else {
+        newSet.add(categoryId);
+      }
+      return newSet;
+    });
+  };
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -136,108 +151,151 @@ export default function CategoriesPageClient({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {categories.map((category) => (
-                  <React.Fragment key={category.id}>
-                    <TableRow>
-                      <TableCell className="font-medium">
-                        {category.name}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {category.description || "-"}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex flex-wrap gap-1">
-                          {category.subCategories.length > 0 ? (
-                            category.subCategories.map((subCat) => (
-                              <span
-                                key={subCat.id}
-                                className="inline-flex items-center rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground"
-                              >
-                                {subCat.name}
-                              </span>
-                            ))
-                          ) : (
-                            <span className="text-xs text-muted-foreground">
-                              No sub-categories
-                            </span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() =>
-                              setCategoryDialog({ open: true, category })
-                            }
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() =>
-                              setDeleteDialog({
-                                open: true,
-                                type: "category",
-                                id: category.id,
-                                name: category.name,
-                              })
-                            }
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                    {category.subCategories.map((subCat) => (
-                      <TableRow key={subCat.id} className="bg-muted/30">
-                        <TableCell className="pl-8">
+                {categories.map((category) => {
+                  const isExpanded = expandedCategories.has(category.id);
+                  const hasSubCategories = category.subCategories.length > 0;
+
+                  return (
+                    <React.Fragment key={category.id}>
+                      <TableRow>
+                        <TableCell className="font-medium">
                           <div className="flex items-center gap-2">
-                            <span className="text-muted-foreground">└─</span>
-                            <span className="text-sm">{subCat.name}</span>
+                            {hasSubCategories && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleCategory(category.id);
+                                }}
+                              >
+                                {isExpanded ? (
+                                  <ChevronDown className="h-4 w-4" />
+                                ) : (
+                                  <ChevronRight className="h-4 w-4" />
+                                )}
+                              </Button>
+                            )}
+                            {!hasSubCategories && (
+                              <span className="w-6" /> // Spacer for alignment
+                            )}
+                            <span
+                              className={
+                                hasSubCategories
+                                  ? "cursor-pointer hover:text-primary"
+                                  : ""
+                              }
+                              onClick={() => {
+                                if (hasSubCategories) {
+                                  toggleCategory(category.id);
+                                }
+                              }}
+                            >
+                              {category.name}
+                            </span>
                           </div>
                         </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
-                          {subCat.description || "-"}
+                        <TableCell className="text-muted-foreground">
+                          {category.description || "-"}
                         </TableCell>
-                        <TableCell></TableCell>
+                        <TableCell>
+                          <div className="flex flex-wrap gap-1">
+                            {category.subCategories.length > 0 ? (
+                              category.subCategories.map((subCat) => (
+                                <span
+                                  key={subCat.id}
+                                  className="inline-flex items-center rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground"
+                                >
+                                  {subCat.name}
+                                </span>
+                              ))
+                            ) : (
+                              <span className="text-xs text-muted-foreground">
+                                No sub-categories
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
                             <Button
                               variant="ghost"
                               size="icon"
-                              onClick={() =>
-                                setSubCategoryDialog({
-                                  open: true,
-                                  subCategory: subCat,
-                                  categoryId: category.id,
-                                })
-                              }
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setCategoryDialog({ open: true, category });
+                              }}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
                             <Button
                               variant="ghost"
                               size="icon"
-                              onClick={() =>
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 setDeleteDialog({
                                   open: true,
-                                  type: "subCategory",
-                                  id: subCat.id,
-                                  name: subCat.name,
-                                })
-                              }
+                                  type: "category",
+                                  id: category.id,
+                                  name: category.name,
+                                });
+                              }}
                             >
                               <Trash2 className="h-4 w-4 text-destructive" />
                             </Button>
                           </div>
                         </TableCell>
                       </TableRow>
-                    ))}
-                  </React.Fragment>
-                ))}
+                      {isExpanded &&
+                        category.subCategories.map((subCat) => (
+                          <TableRow key={subCat.id} className="bg-muted/30">
+                            <TableCell className="pl-8">
+                              <div className="flex items-center gap-2">
+                                <span className="text-muted-foreground">└─</span>
+                                <span className="text-sm">{subCat.name}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-sm text-muted-foreground">
+                              {subCat.description || "-"}
+                            </TableCell>
+                            <TableCell></TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-2">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() =>
+                                    setSubCategoryDialog({
+                                      open: true,
+                                      subCategory: subCat,
+                                      categoryId: category.id,
+                                    })
+                                  }
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() =>
+                                    setDeleteDialog({
+                                      open: true,
+                                      type: "subCategory",
+                                      id: subCat.id,
+                                      name: subCat.name,
+                                    })
+                                  }
+                                >
+                                  <Trash2 className="h-4 w-4 text-destructive" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                    </React.Fragment>
+                  );
+                })}
               </TableBody>
             </Table>
           </div>
