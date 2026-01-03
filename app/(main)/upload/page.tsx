@@ -1,9 +1,5 @@
-import React from 'react'
+import UploadPageClient from "./page-client";
 
-const UploadPage = () => {
-    return (
-        <div>UploadPage</div>
-    )
+export default function UploadPage() {
+  return <UploadPageClient />;
 }
-
-export default UploadPage
