@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+  INVESTMENT
+  TRANSFER
+}
+
+enum TransactionStatus {
+  COMPLETED
+  PENDING
+  FAILED
+}
+
+enum PaymentMethod {
+  UPI
+  ONLINE
+  CARD
+  BANK
+  WALLET
+}
+
+model Category {
+  id            String        @id @default(uuid())
+  name          String        @unique
+  description   String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  subCategories SubCategory[]
+  transactions  Transaction[]
+}
+
+model SubCategory {
+  id           String        @id @default(uuid())
+  name         String
+  description  String?
+  categoryId   String
+  category     Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  transactions Transaction[]
+
+  @@unique([categoryId, name])
+  @@index([categoryId])
+}
+
+model Transaction {
+  id            String            @id @default(uuid())
+  amount        Decimal
+  date          DateTime
+  description   String
+  type          TransactionType
+  status        TransactionStatus @default(COMPLETED)
+  paymentMethod PaymentMethod?
+  categoryId    String?
+  category      Category?         @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  subCategoryId String?
+  subCategory   SubCategory?      @relation(fields: [subCategoryId], references: [id], onDelete: SetNull)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@index([date])
+  @@index([type])
+  @@index([categoryId])
+  @@index([subCategoryId])
+}
