@@ -17,6 +17,16 @@ import {
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { createTransaction } from "@/app/(main)/transactions/actions";
 import {
+  TransactionType,
+  TransactionStatus,
+  PaymentMethod,
+  BankAccountName,
+  getTransactionTypeLabel,
+  getTransactionStatusLabel,
+  getPaymentMethodLabel,
+  getBankAccountLabel,
+} from "@/lib/transaction-enums";
+import {
   Plus,
   Loader2,
   Calendar,
@@ -63,7 +73,10 @@ export function AddTransactionForm({
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [amount, setAmount] = useState<string>("");
   const [currency, setCurrency] = useState<string>("USD");
-  const [transactionType, setTransactionType] = useState<"EXPENSE" | "INCOME">("EXPENSE");
+  const [transactionType, setTransactionType] = useState<TransactionType>(TransactionType.EXPENSE);
+  const [status, setStatus] = useState<TransactionStatus>(TransactionStatus.COMPLETED);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | "">("");
+  const [bankAccountName, setBankAccountName] = useState<BankAccountName | "">("");
   const [internalOpen, setInternalOpen] = useState(false);
 
   const open = controlledOpen ?? internalOpen;
@@ -86,15 +99,25 @@ export function AddTransactionForm({
   async function handleSubmit(formData: FormData) {
     setIsSubmitting(true);
     try {
-      // Set transaction type based on selection
+      // Set transaction type, status, payment method, and bank account based on selection
       formData.set("type", transactionType);
+      formData.set("status", status);
+      if (paymentMethod) {
+        formData.set("paymentMethod", paymentMethod);
+      }
+      if (bankAccountName) {
+        formData.set("bankAccountName", bankAccountName);
+      }
       await createTransaction(formData);
       setOpen(false);
       // Reset form
       setAmount("");
       setSelectedDate(new Date());
       setSelectedCategoryId("");
-      setTransactionType("EXPENSE");
+      setTransactionType(TransactionType.EXPENSE);
+      setStatus(TransactionStatus.COMPLETED);
+      setPaymentMethod("");
+      setBankAccountName("");
       router.refresh();
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -148,36 +171,66 @@ export function AddTransactionForm({
           {/* Transaction Type Selection */}
           <div className="space-y-2">
             <Label>Transaction Type</Label>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <Button
                 type="button"
-                variant={transactionType === "EXPENSE" ? "default" : "outline"}
-                className={`h-16 flex-col gap-2 ${transactionType === "EXPENSE"
+                variant={transactionType === TransactionType.EXPENSE ? "default" : "outline"}
+                className={`h-16 flex-col gap-2 ${transactionType === TransactionType.EXPENSE
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground"
                   }`}
-                onClick={() => setTransactionType("EXPENSE")}
+                onClick={() => setTransactionType(TransactionType.EXPENSE)}
               >
                 <ArrowDownLeft
-                  className={`h-5 w-5 ${transactionType === "EXPENSE" ? "text-red-400" : "text-muted-foreground"
+                  className={`h-5 w-5 ${transactionType === TransactionType.EXPENSE ? "text-red-400" : "text-muted-foreground"
                     }`}
                 />
-                <span className="font-medium">Expense (Debit)</span>
+                <span className="font-medium text-xs">Expense</span>
               </Button>
               <Button
                 type="button"
-                variant={transactionType === "INCOME" ? "default" : "outline"}
-                className={`h-16 flex-col gap-2 ${transactionType === "INCOME"
+                variant={transactionType === TransactionType.INCOME ? "default" : "outline"}
+                className={`h-16 flex-col gap-2 ${transactionType === TransactionType.INCOME
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground"
                   }`}
-                onClick={() => setTransactionType("INCOME")}
+                onClick={() => setTransactionType(TransactionType.INCOME)}
               >
                 <ArrowUpRight
-                  className={`h-5 w-5 ${transactionType === "INCOME" ? "text-green-400" : "text-muted-foreground"
+                  className={`h-5 w-5 ${transactionType === TransactionType.INCOME ? "text-green-400" : "text-muted-foreground"
                     }`}
                 />
-                <span className="font-medium">Income (Credit)</span>
+                <span className="font-medium text-xs">Income</span>
+              </Button>
+              <Button
+                type="button"
+                variant={transactionType === TransactionType.INVESTMENT ? "default" : "outline"}
+                className={`h-16 flex-col gap-2 ${transactionType === TransactionType.INVESTMENT
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground"
+                  }`}
+                onClick={() => setTransactionType(TransactionType.INVESTMENT)}
+              >
+                <ArrowUpRight
+                  className={`h-5 w-5 ${transactionType === TransactionType.INVESTMENT ? "text-blue-400" : "text-muted-foreground"
+                    }`}
+                />
+                <span className="font-medium text-xs">Investment</span>
+              </Button>
+              <Button
+                type="button"
+                variant={transactionType === TransactionType.TRANSFER ? "default" : "outline"}
+                className={`h-16 flex-col gap-2 ${transactionType === TransactionType.TRANSFER
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground"
+                  }`}
+                onClick={() => setTransactionType(TransactionType.TRANSFER)}
+              >
+                <ArrowDownLeft
+                  className={`h-5 w-5 ${transactionType === TransactionType.TRANSFER ? "text-purple-400" : "text-muted-foreground"
+                    }`}
+                />
+                <span className="font-medium text-xs">Transfer</span>
               </Button>
             </div>
           </div>
@@ -234,13 +287,19 @@ export function AddTransactionForm({
                   <CreditCard className="h-4 w-4" />
                   Payment Method
                 </Label>
-                <Select id="paymentMethod" name="paymentMethod" className="w-full">
+                <Select
+                  id="paymentMethod"
+                  name="paymentMethod"
+                  className="w-full"
+                  value={paymentMethod}
+                  onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod | "")}
+                >
                   <option value="">Select Payment Method</option>
-                  <option value="CARD">Credit Card</option>
-                  <option value="UPI">UPI</option>
-                  <option value="ONLINE">Online</option>
-                  <option value="BANK">Bank Transfer</option>
-                  <option value="WALLET">Wallet</option>
+                  {Object.values(PaymentMethod).map((method) => (
+                    <option key={method} value={method}>
+                      {getPaymentMethodLabel(method)}
+                    </option>
+                  ))}
                 </Select>
               </div>
             </div>
@@ -253,14 +312,19 @@ export function AddTransactionForm({
                   <CheckCircle className="h-4 w-4" />
                   Status
                 </Label>
-                <Input
+                <Select
                   id="status"
                   name="status"
-                  defaultValue="Completed"
-                  readOnly
-                  className="w-full bg-muted"
-                />
-                <input type="hidden" name="status" value="COMPLETED" />
+                  className="w-full"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value as TransactionStatus)}
+                >
+                  {Object.values(TransactionStatus).map((statusValue) => (
+                    <option key={statusValue} value={statusValue}>
+                      {getTransactionStatusLabel(statusValue)}
+                    </option>
+                  ))}
+                </Select>
               </div>
 
               {/* Sub Category */}
@@ -289,16 +353,25 @@ export function AddTransactionForm({
                 )}
               </div>
 
-              {/* Bank Account (Optional - not in schema but shown in image) */}
+              {/* Bank Account */}
               <div className="space-y-2">
-                <Label htmlFor="bankAccount" className="flex items-center gap-2">
+                <Label htmlFor="bankAccountName" className="flex items-center gap-2">
                   <Building2 className="h-4 w-4" />
                   Bank Account
                 </Label>
-                <Select id="bankAccount" name="bankAccount" className="w-full">
+                <Select
+                  id="bankAccountName"
+                  name="bankAccountName"
+                  className="w-full"
+                  value={bankAccountName}
+                  onChange={(e) => setBankAccountName(e.target.value as BankAccountName | "")}
+                >
                   <option value="">Select Bank Account</option>
-                  <option value="main">Main Checking (**** 1234)</option>
-                  <option value="savings">Savings Account (**** 5678)</option>
+                  {Object.values(BankAccountName).map((account) => (
+                    <option key={account} value={account}>
+                      {getBankAccountLabel(account)}
+                    </option>
+                  ))}
                 </Select>
               </div>
             </div>

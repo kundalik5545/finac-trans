@@ -12,14 +12,19 @@ export function Navbar() {
       label: "Transactions",
       href: "/transactions",
     },
+
+    {
+      label: "Categories",
+      href: "/categories",
+    }, {
+      label: "Upload",
+      href: "/upload",
+    },
     {
       label: "About",
       href: "/about",
     },
-    {
-      label: "Upload",
-      href: "/upload",
-    },
+
   ]
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">

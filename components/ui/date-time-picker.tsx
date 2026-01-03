@@ -52,6 +52,7 @@ export function DateTimePicker({
             newDateTime.setHours(hours || 0, minutes || 0, 0, 0);
             setDate(newDateTime);
             onChange?.(newDateTime);
+            setOpen(false); // Close popover after selecting date
         } else {
             setDate(undefined);
             onChange?.(undefined);
