@@ -37,3 +37,14 @@ export const PaymentMethod = {
 } as const
 
 export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]
+
+
+export const BankAccountName = {
+  SBI: 'SBI',
+  AXIS: 'AXIS',
+  FEDERAL_BANK: 'FEDERAL_BANK',
+  SBI_CARD: 'SBI_CARD',
+  ICICI_CARD: 'ICICI_CARD'
+} as const
+
+export type BankAccountName = (typeof BankAccountName)[keyof typeof BankAccountName]

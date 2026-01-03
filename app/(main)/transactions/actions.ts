@@ -29,12 +29,7 @@ export async function createTransaction(formData: FormData) {
           ? (paymentMethod as "UPI" | "ONLINE" | "CARD" | "BANK" | "WALLET")
           : null,
         bankAccountName: formData.get("bankAccountName")
-          ? (formData.get("bankAccountName") as
-              | "SBI"
-              | "AXIS"
-              | "FEDERAL_BANK"
-              | "SBI_CARD"
-              | "ICICI_CARD")
+          ? (formData.get("bankAccountName") as "SBI" | "AXIS" | "FEDERAL_BANK" | "SBI_CARD" | "ICICI_CARD")
           : null,
         categoryId: categoryId ? (categoryId as string) : null,
         subCategoryId: subCategoryId ? (subCategoryId as string) : null,
@@ -107,12 +102,7 @@ export async function updateTransaction(id: string, formData: FormData) {
           ? (paymentMethod as "UPI" | "ONLINE" | "CARD" | "BANK" | "WALLET")
           : null,
         bankAccountName: bankAccountName
-          ? (bankAccountName as
-              | "SBI"
-              | "AXIS"
-              | "FEDERAL_BANK"
-              | "SBI_CARD"
-              | "ICICI_CARD")
+          ? (bankAccountName as "SBI" | "AXIS" | "FEDERAL_BANK" | "SBI_CARD" | "ICICI_CARD")
           : null,
         categoryId: categoryId ? (categoryId as string) : null,
         subCategoryId: subCategoryId ? (subCategoryId as string) : null,
@@ -142,7 +132,7 @@ export async function deleteTransaction(id: string) {
 export async function getTransactions(page: number = 1, pageSize: number = 10) {
   try {
     const skip = (page - 1) * pageSize;
-
+    
     const [transactions, total] = await Promise.all([
       prisma.transaction.findMany({
         skip,
@@ -197,3 +187,4 @@ export async function getAllTransactions() {
     return [];
   }
 }
+

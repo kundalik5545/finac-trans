@@ -42,6 +42,7 @@ export type TransactionMinAggregateOutputType = {
   type: $Enums.TransactionType | null
   status: $Enums.TransactionStatus | null
   paymentMethod: $Enums.PaymentMethod | null
+  bankAccountName: $Enums.BankAccountName | null
   categoryId: string | null
   subCategoryId: string | null
   createdAt: Date | null
@@ -56,6 +57,7 @@ export type TransactionMaxAggregateOutputType = {
   type: $Enums.TransactionType | null
   status: $Enums.TransactionStatus | null
   paymentMethod: $Enums.PaymentMethod | null
+  bankAccountName: $Enums.BankAccountName | null
   categoryId: string | null
   subCategoryId: string | null
   createdAt: Date | null
@@ -70,6 +72,7 @@ export type TransactionCountAggregateOutputType = {
   type: number
   status: number
   paymentMethod: number
+  bankAccountName: number
   categoryId: number
   subCategoryId: number
   createdAt: number
@@ -94,6 +97,7 @@ export type TransactionMinAggregateInputType = {
   type?: true
   status?: true
   paymentMethod?: true
+  bankAccountName?: true
   categoryId?: true
   subCategoryId?: true
   createdAt?: true
@@ -108,6 +112,7 @@ export type TransactionMaxAggregateInputType = {
   type?: true
   status?: true
   paymentMethod?: true
+  bankAccountName?: true
   categoryId?: true
   subCategoryId?: true
   createdAt?: true
@@ -122,6 +127,7 @@ export type TransactionCountAggregateInputType = {
   type?: true
   status?: true
   paymentMethod?: true
+  bankAccountName?: true
   categoryId?: true
   subCategoryId?: true
   createdAt?: true
@@ -219,10 +225,11 @@ export type TransactionGroupByOutputType = {
   id: string
   amount: runtime.Decimal
   date: Date
-  description: string
+  description: string | null
   type: $Enums.TransactionType
   status: $Enums.TransactionStatus
   paymentMethod: $Enums.PaymentMethod | null
+  bankAccountName: $Enums.BankAccountName | null
   categoryId: string | null
   subCategoryId: string | null
   createdAt: Date
@@ -256,10 +263,11 @@ export type TransactionWhereInput = {
   id?: Prisma.StringFilter<"Transaction"> | string
   amount?: Prisma.DecimalFilter<"Transaction"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   date?: Prisma.DateTimeFilter<"Transaction"> | Date | string
-  description?: Prisma.StringFilter<"Transaction"> | string
+  description?: Prisma.StringNullableFilter<"Transaction"> | string | null
   type?: Prisma.EnumTransactionTypeFilter<"Transaction"> | $Enums.TransactionType
   status?: Prisma.EnumTransactionStatusFilter<"Transaction"> | $Enums.TransactionStatus
   paymentMethod?: Prisma.EnumPaymentMethodNullableFilter<"Transaction"> | $Enums.PaymentMethod | null
+  bankAccountName?: Prisma.EnumBankAccountNameNullableFilter<"Transaction"> | $Enums.BankAccountName | null
   categoryId?: Prisma.StringNullableFilter<"Transaction"> | string | null
   subCategoryId?: Prisma.StringNullableFilter<"Transaction"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Transaction"> | Date | string
@@ -272,10 +280,11 @@ export type TransactionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   date?: Prisma.SortOrder
-  description?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   type?: Prisma.SortOrder
   status?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrderInput | Prisma.SortOrder
+  bankAccountName?: Prisma.SortOrderInput | Prisma.SortOrder
   categoryId?: Prisma.SortOrderInput | Prisma.SortOrder
   subCategoryId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -291,10 +300,11 @@ export type TransactionWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.TransactionWhereInput | Prisma.TransactionWhereInput[]
   amount?: Prisma.DecimalFilter<"Transaction"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   date?: Prisma.DateTimeFilter<"Transaction"> | Date | string
-  description?: Prisma.StringFilter<"Transaction"> | string
+  description?: Prisma.StringNullableFilter<"Transaction"> | string | null
   type?: Prisma.EnumTransactionTypeFilter<"Transaction"> | $Enums.TransactionType
   status?: Prisma.EnumTransactionStatusFilter<"Transaction"> | $Enums.TransactionStatus
   paymentMethod?: Prisma.EnumPaymentMethodNullableFilter<"Transaction"> | $Enums.PaymentMethod | null
+  bankAccountName?: Prisma.EnumBankAccountNameNullableFilter<"Transaction"> | $Enums.BankAccountName | null
   categoryId?: Prisma.StringNullableFilter<"Transaction"> | string | null
   subCategoryId?: Prisma.StringNullableFilter<"Transaction"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Transaction"> | Date | string
@@ -307,10 +317,11 @@ export type TransactionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   date?: Prisma.SortOrder
-  description?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   type?: Prisma.SortOrder
   status?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrderInput | Prisma.SortOrder
+  bankAccountName?: Prisma.SortOrderInput | Prisma.SortOrder
   categoryId?: Prisma.SortOrderInput | Prisma.SortOrder
   subCategoryId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -329,10 +340,11 @@ export type TransactionScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Transaction"> | string
   amount?: Prisma.DecimalWithAggregatesFilter<"Transaction"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   date?: Prisma.DateTimeWithAggregatesFilter<"Transaction"> | Date | string
-  description?: Prisma.StringWithAggregatesFilter<"Transaction"> | string
+  description?: Prisma.StringNullableWithAggregatesFilter<"Transaction"> | string | null
   type?: Prisma.EnumTransactionTypeWithAggregatesFilter<"Transaction"> | $Enums.TransactionType
   status?: Prisma.EnumTransactionStatusWithAggregatesFilter<"Transaction"> | $Enums.TransactionStatus
   paymentMethod?: Prisma.EnumPaymentMethodNullableWithAggregatesFilter<"Transaction"> | $Enums.PaymentMethod | null
+  bankAccountName?: Prisma.EnumBankAccountNameNullableWithAggregatesFilter<"Transaction"> | $Enums.BankAccountName | null
   categoryId?: Prisma.StringNullableWithAggregatesFilter<"Transaction"> | string | null
   subCategoryId?: Prisma.StringNullableWithAggregatesFilter<"Transaction"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Transaction"> | Date | string
@@ -343,10 +355,11 @@ export type TransactionCreateInput = {
   id?: string
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   date: Date | string
-  description: string
-  type: $Enums.TransactionType
+  description?: string | null
+  type?: $Enums.TransactionType
   status?: $Enums.TransactionStatus
   paymentMethod?: $Enums.PaymentMethod | null
+  bankAccountName?: $Enums.BankAccountName | null
   createdAt?: Date | string
   updatedAt?: Date | string
   category?: Prisma.CategoryCreateNestedOneWithoutTransactionsInput
@@ -357,10 +370,11 @@ export type TransactionUncheckedCreateInput = {
   id?: string
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   date: Date | string
-  description: string
-  type: $Enums.TransactionType
+  description?: string | null
+  type?: $Enums.TransactionType
   status?: $Enums.TransactionStatus
   paymentMethod?: $Enums.PaymentMethod | null
+  bankAccountName?: $Enums.BankAccountName | null
   categoryId?: string | null
   subCategoryId?: string | null
   createdAt?: Date | string
@@ -371,10 +385,11 @@ export type TransactionUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
   status?: Prisma.EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
   paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
+  bankAccountName?: Prisma.NullableEnumBankAccountNameFieldUpdateOperationsInput | $Enums.BankAccountName | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   category?: Prisma.CategoryUpdateOneWithoutTransactionsNestedInput
@@ -385,10 +400,11 @@ export type TransactionUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
   status?: Prisma.EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
   paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
+  bankAccountName?: Prisma.NullableEnumBankAccountNameFieldUpdateOperationsInput | $Enums.BankAccountName | null
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -399,10 +415,11 @@ export type TransactionCreateManyInput = {
   id?: string
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   date: Date | string
-  description: string
-  type: $Enums.TransactionType
+  description?: string | null
+  type?: $Enums.TransactionType
   status?: $Enums.TransactionStatus
   paymentMethod?: $Enums.PaymentMethod | null
+  bankAccountName?: $Enums.BankAccountName | null
   categoryId?: string | null
   subCategoryId?: string | null
   createdAt?: Date | string
@@ -413,10 +430,11 @@ export type TransactionUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
   status?: Prisma.EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
   paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
+  bankAccountName?: Prisma.NullableEnumBankAccountNameFieldUpdateOperationsInput | $Enums.BankAccountName | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -425,10 +443,11 @@ export type TransactionUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
   status?: Prisma.EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
   paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
+  bankAccountName?: Prisma.NullableEnumBankAccountNameFieldUpdateOperationsInput | $Enums.BankAccountName | null
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -453,6 +472,7 @@ export type TransactionCountOrderByAggregateInput = {
   type?: Prisma.SortOrder
   status?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
+  bankAccountName?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
   subCategoryId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -471,6 +491,7 @@ export type TransactionMaxOrderByAggregateInput = {
   type?: Prisma.SortOrder
   status?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
+  bankAccountName?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
   subCategoryId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -485,6 +506,7 @@ export type TransactionMinOrderByAggregateInput = {
   type?: Prisma.SortOrder
   status?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
+  bankAccountName?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
   subCategoryId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -599,14 +621,19 @@ export type NullableEnumPaymentMethodFieldUpdateOperationsInput = {
   set?: $Enums.PaymentMethod | null
 }
 
+export type NullableEnumBankAccountNameFieldUpdateOperationsInput = {
+  set?: $Enums.BankAccountName | null
+}
+
 export type TransactionCreateWithoutCategoryInput = {
   id?: string
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   date: Date | string
-  description: string
-  type: $Enums.TransactionType
+  description?: string | null
+  type?: $Enums.TransactionType
   status?: $Enums.TransactionStatus
   paymentMethod?: $Enums.PaymentMethod | null
+  bankAccountName?: $Enums.BankAccountName | null
   createdAt?: Date | string
   updatedAt?: Date | string
   subCategory?: Prisma.SubCategoryCreateNestedOneWithoutTransactionsInput
@@ -616,10 +643,11 @@ export type TransactionUncheckedCreateWithoutCategoryInput = {
   id?: string
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   date: Date | string
-  description: string
-  type: $Enums.TransactionType
+  description?: string | null
+  type?: $Enums.TransactionType
   status?: $Enums.TransactionStatus
   paymentMethod?: $Enums.PaymentMethod | null
+  bankAccountName?: $Enums.BankAccountName | null
   subCategoryId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -658,10 +686,11 @@ export type TransactionScalarWhereInput = {
   id?: Prisma.StringFilter<"Transaction"> | string
   amount?: Prisma.DecimalFilter<"Transaction"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   date?: Prisma.DateTimeFilter<"Transaction"> | Date | string
-  description?: Prisma.StringFilter<"Transaction"> | string
+  description?: Prisma.StringNullableFilter<"Transaction"> | string | null
   type?: Prisma.EnumTransactionTypeFilter<"Transaction"> | $Enums.TransactionType
   status?: Prisma.EnumTransactionStatusFilter<"Transaction"> | $Enums.TransactionStatus
   paymentMethod?: Prisma.EnumPaymentMethodNullableFilter<"Transaction"> | $Enums.PaymentMethod | null
+  bankAccountName?: Prisma.EnumBankAccountNameNullableFilter<"Transaction"> | $Enums.BankAccountName | null
   categoryId?: Prisma.StringNullableFilter<"Transaction"> | string | null
   subCategoryId?: Prisma.StringNullableFilter<"Transaction"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Transaction"> | Date | string
@@ -672,10 +701,11 @@ export type TransactionCreateWithoutSubCategoryInput = {
   id?: string
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   date: Date | string
-  description: string
-  type: $Enums.TransactionType
+  description?: string | null
+  type?: $Enums.TransactionType
   status?: $Enums.TransactionStatus
   paymentMethod?: $Enums.PaymentMethod | null
+  bankAccountName?: $Enums.BankAccountName | null
   createdAt?: Date | string
   updatedAt?: Date | string
   category?: Prisma.CategoryCreateNestedOneWithoutTransactionsInput
@@ -685,10 +715,11 @@ export type TransactionUncheckedCreateWithoutSubCategoryInput = {
   id?: string
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   date: Date | string
-  description: string
-  type: $Enums.TransactionType
+  description?: string | null
+  type?: $Enums.TransactionType
   status?: $Enums.TransactionStatus
   paymentMethod?: $Enums.PaymentMethod | null
+  bankAccountName?: $Enums.BankAccountName | null
   categoryId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -724,10 +755,11 @@ export type TransactionCreateManyCategoryInput = {
   id?: string
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   date: Date | string
-  description: string
-  type: $Enums.TransactionType
+  description?: string | null
+  type?: $Enums.TransactionType
   status?: $Enums.TransactionStatus
   paymentMethod?: $Enums.PaymentMethod | null
+  bankAccountName?: $Enums.BankAccountName | null
   subCategoryId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -737,10 +769,11 @@ export type TransactionUpdateWithoutCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
   status?: Prisma.EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
   paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
+  bankAccountName?: Prisma.NullableEnumBankAccountNameFieldUpdateOperationsInput | $Enums.BankAccountName | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subCategory?: Prisma.SubCategoryUpdateOneWithoutTransactionsNestedInput
@@ -750,10 +783,11 @@ export type TransactionUncheckedUpdateWithoutCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
   status?: Prisma.EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
   paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
+  bankAccountName?: Prisma.NullableEnumBankAccountNameFieldUpdateOperationsInput | $Enums.BankAccountName | null
   subCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -763,10 +797,11 @@ export type TransactionUncheckedUpdateManyWithoutCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
   status?: Prisma.EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
   paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
+  bankAccountName?: Prisma.NullableEnumBankAccountNameFieldUpdateOperationsInput | $Enums.BankAccountName | null
   subCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -776,10 +811,11 @@ export type TransactionCreateManySubCategoryInput = {
   id?: string
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   date: Date | string
-  description: string
-  type: $Enums.TransactionType
+  description?: string | null
+  type?: $Enums.TransactionType
   status?: $Enums.TransactionStatus
   paymentMethod?: $Enums.PaymentMethod | null
+  bankAccountName?: $Enums.BankAccountName | null
   categoryId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -789,10 +825,11 @@ export type TransactionUpdateWithoutSubCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
   status?: Prisma.EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
   paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
+  bankAccountName?: Prisma.NullableEnumBankAccountNameFieldUpdateOperationsInput | $Enums.BankAccountName | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   category?: Prisma.CategoryUpdateOneWithoutTransactionsNestedInput
@@ -802,10 +839,11 @@ export type TransactionUncheckedUpdateWithoutSubCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
   status?: Prisma.EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
   paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
+  bankAccountName?: Prisma.NullableEnumBankAccountNameFieldUpdateOperationsInput | $Enums.BankAccountName | null
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -815,10 +853,11 @@ export type TransactionUncheckedUpdateManyWithoutSubCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
   status?: Prisma.EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
   paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
+  bankAccountName?: Prisma.NullableEnumBankAccountNameFieldUpdateOperationsInput | $Enums.BankAccountName | null
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -834,6 +873,7 @@ export type TransactionSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   type?: boolean
   status?: boolean
   paymentMethod?: boolean
+  bankAccountName?: boolean
   categoryId?: boolean
   subCategoryId?: boolean
   createdAt?: boolean
@@ -850,6 +890,7 @@ export type TransactionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   type?: boolean
   status?: boolean
   paymentMethod?: boolean
+  bankAccountName?: boolean
   categoryId?: boolean
   subCategoryId?: boolean
   createdAt?: boolean
@@ -866,6 +907,7 @@ export type TransactionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   type?: boolean
   status?: boolean
   paymentMethod?: boolean
+  bankAccountName?: boolean
   categoryId?: boolean
   subCategoryId?: boolean
   createdAt?: boolean
@@ -882,13 +924,14 @@ export type TransactionSelectScalar = {
   type?: boolean
   status?: boolean
   paymentMethod?: boolean
+  bankAccountName?: boolean
   categoryId?: boolean
   subCategoryId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type TransactionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "amount" | "date" | "description" | "type" | "status" | "paymentMethod" | "categoryId" | "subCategoryId" | "createdAt" | "updatedAt", ExtArgs["result"]["transaction"]>
+export type TransactionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "amount" | "date" | "description" | "type" | "status" | "paymentMethod" | "bankAccountName" | "categoryId" | "subCategoryId" | "createdAt" | "updatedAt", ExtArgs["result"]["transaction"]>
 export type TransactionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   category?: boolean | Prisma.Transaction$categoryArgs<ExtArgs>
   subCategory?: boolean | Prisma.Transaction$subCategoryArgs<ExtArgs>
@@ -912,10 +955,11 @@ export type $TransactionPayload<ExtArgs extends runtime.Types.Extensions.Interna
     id: string
     amount: runtime.Decimal
     date: Date
-    description: string
+    description: string | null
     type: $Enums.TransactionType
     status: $Enums.TransactionStatus
     paymentMethod: $Enums.PaymentMethod | null
+    bankAccountName: $Enums.BankAccountName | null
     categoryId: string | null
     subCategoryId: string | null
     createdAt: Date
@@ -1352,6 +1396,7 @@ export interface TransactionFieldRefs {
   readonly type: Prisma.FieldRef<"Transaction", 'TransactionType'>
   readonly status: Prisma.FieldRef<"Transaction", 'TransactionStatus'>
   readonly paymentMethod: Prisma.FieldRef<"Transaction", 'PaymentMethod'>
+  readonly bankAccountName: Prisma.FieldRef<"Transaction", 'BankAccountName'>
   readonly categoryId: Prisma.FieldRef<"Transaction", 'String'>
   readonly subCategoryId: Prisma.FieldRef<"Transaction", 'String'>
   readonly createdAt: Prisma.FieldRef<"Transaction", 'DateTime'>

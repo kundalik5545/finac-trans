@@ -698,6 +698,7 @@ export const TransactionScalarFieldEnum = {
   type: 'type',
   status: 'status',
   paymentMethod: 'paymentMethod',
+  bankAccountName: 'bankAccountName',
   categoryId: 'categoryId',
   subCategoryId: 'subCategoryId',
   createdAt: 'createdAt',
@@ -818,6 +819,20 @@ export type EnumPaymentMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$Pr
  * Reference to a field of type 'PaymentMethod[]'
  */
 export type ListEnumPaymentMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentMethod[]'>
+    
+
+
+/**
+ * Reference to a field of type 'BankAccountName'
+ */
+export type EnumBankAccountNameFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BankAccountName'>
+    
+
+
+/**
+ * Reference to a field of type 'BankAccountName[]'
+ */
+export type ListEnumBankAccountNameFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BankAccountName[]'>
     
 
 

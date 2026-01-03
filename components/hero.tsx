@@ -14,7 +14,7 @@ export function Hero() {
             Effortless Tracking
           </span>
           <h1 className="text-4xl font-extrabold leading-tight tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl lg:leading-[1.05]">
-            <span className="bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-primary to-purple-600 bg-clip-text text-transparent">
               Take Control of Your Finances
             </span>
           </h1>

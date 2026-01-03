@@ -142,6 +142,13 @@ export type EnumPaymentMethodNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumPaymentMethodNullableFilter<$PrismaModel> | $Enums.PaymentMethod | null
 }
 
+export type EnumBankAccountNameNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.BankAccountName | Prisma.EnumBankAccountNameFieldRefInput<$PrismaModel> | null
+  in?: $Enums.BankAccountName[] | Prisma.ListEnumBankAccountNameFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.BankAccountName[] | Prisma.ListEnumBankAccountNameFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumBankAccountNameNullableFilter<$PrismaModel> | $Enums.BankAccountName | null
+}
+
 export type DecimalWithAggregatesFilter<$PrismaModel = never> = {
   equals?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>
   in?: runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[] | Prisma.ListDecimalFieldRefInput<$PrismaModel>
@@ -186,6 +193,16 @@ export type EnumPaymentMethodNullableWithAggregatesFilter<$PrismaModel = never> 
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedEnumPaymentMethodNullableFilter<$PrismaModel>
   _max?: Prisma.NestedEnumPaymentMethodNullableFilter<$PrismaModel>
+}
+
+export type EnumBankAccountNameNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.BankAccountName | Prisma.EnumBankAccountNameFieldRefInput<$PrismaModel> | null
+  in?: $Enums.BankAccountName[] | Prisma.ListEnumBankAccountNameFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.BankAccountName[] | Prisma.ListEnumBankAccountNameFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumBankAccountNameNullableWithAggregatesFilter<$PrismaModel> | $Enums.BankAccountName | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumBankAccountNameNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumBankAccountNameNullableFilter<$PrismaModel>
 }
 
 export type NestedStringFilter<$PrismaModel = never> = {
@@ -329,6 +346,13 @@ export type NestedEnumPaymentMethodNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumPaymentMethodNullableFilter<$PrismaModel> | $Enums.PaymentMethod | null
 }
 
+export type NestedEnumBankAccountNameNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.BankAccountName | Prisma.EnumBankAccountNameFieldRefInput<$PrismaModel> | null
+  in?: $Enums.BankAccountName[] | Prisma.ListEnumBankAccountNameFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.BankAccountName[] | Prisma.ListEnumBankAccountNameFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumBankAccountNameNullableFilter<$PrismaModel> | $Enums.BankAccountName | null
+}
+
 export type NestedDecimalWithAggregatesFilter<$PrismaModel = never> = {
   equals?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>
   in?: runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[] | Prisma.ListDecimalFieldRefInput<$PrismaModel>
@@ -373,6 +397,16 @@ export type NestedEnumPaymentMethodNullableWithAggregatesFilter<$PrismaModel = n
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedEnumPaymentMethodNullableFilter<$PrismaModel>
   _max?: Prisma.NestedEnumPaymentMethodNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumBankAccountNameNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.BankAccountName | Prisma.EnumBankAccountNameFieldRefInput<$PrismaModel> | null
+  in?: $Enums.BankAccountName[] | Prisma.ListEnumBankAccountNameFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.BankAccountName[] | Prisma.ListEnumBankAccountNameFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumBankAccountNameNullableWithAggregatesFilter<$PrismaModel> | $Enums.BankAccountName | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumBankAccountNameNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumBankAccountNameNullableFilter<$PrismaModel>
 }
 
 

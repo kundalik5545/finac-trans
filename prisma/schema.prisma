@@ -31,6 +31,14 @@ enum PaymentMethod {
   WALLET
 }
 
+enum BankAccountName {
+  SBI
+  AXIS
+  FEDERAL_BANK
+  SBI_CARD
+  ICICI_CARD
+}
+
 model Category {
   id            String        @id @default(uuid())
   name          String        @unique
@@ -56,19 +64,20 @@ model SubCategory {
 }
 
 model Transaction {
-  id            String            @id @default(uuid())
-  amount        Decimal
-  date          DateTime
-  description   String
-  type          TransactionType
-  status        TransactionStatus @default(COMPLETED)
-  paymentMethod PaymentMethod?
-  categoryId    String?
-  category      Category?         @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  subCategoryId String?
-  subCategory   SubCategory?      @relation(fields: [subCategoryId], references: [id], onDelete: SetNull)
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+  id              String            @id @default(uuid())
+  amount          Decimal
+  date            DateTime
+  description     String?
+  type            TransactionType   @default(EXPENSE)
+  status          TransactionStatus @default(COMPLETED)
+  paymentMethod   PaymentMethod?    @default(UPI)
+  bankAccountName BankAccountName?  @default(SBI_CARD)
+  categoryId      String?
+  category        Category?         @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  subCategoryId   String?
+  subCategory     SubCategory?      @relation(fields: [subCategoryId], references: [id], onDelete: SetNull)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
 
   @@index([date])
   @@index([type])

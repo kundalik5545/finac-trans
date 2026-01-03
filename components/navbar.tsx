@@ -3,8 +3,26 @@ import { Button } from "@/components/ui/button";
 import { Wallet } from "lucide-react";
 
 export function Navbar() {
+  const navItems = [
+    {
+      label: "Home",
+      href: "/",
+    },
+    {
+      label: "Transactions",
+      href: "/transactions",
+    },
+    {
+      label: "About",
+      href: "/about",
+    },
+    {
+      label: "Upload",
+      href: "/upload",
+    },
+  ]
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -17,24 +35,13 @@ export function Navbar() {
 
           {/* Navigation Links */}
           <div className="hidden items-center space-x-6 md:flex">
-            <Link
-              href="/"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Home
-            </Link>
-            <Link
-              href="/transactions"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Transactions
-            </Link>
-            <Link
-              href="#about"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              About
-            </Link>
+            {navItems.map((item) => (
+              <Link key={item.href} href={item.href}>
+                <Button variant="ghost" size="sm">
+                  {item.label}
+                </Button>
+              </Link>
+            ))}
           </div>
 
           {/* CTA Button */}

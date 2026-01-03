@@ -103,6 +103,7 @@ export const TransactionScalarFieldEnum = {
   type: 'type',
   status: 'status',
   paymentMethod: 'paymentMethod',
+  bankAccountName: 'bankAccountName',
   categoryId: 'categoryId',
   subCategoryId: 'subCategoryId',
   createdAt: 'createdAt',

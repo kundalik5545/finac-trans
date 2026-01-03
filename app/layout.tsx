@@ -24,10 +24,27 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.className} antialiased`}
+        className={`${inter.className} absolute inset-0 z-0 antialiased`}
+        style={myStyles}
       >
-        {children}
+        <Navbar />
+        <main className="">
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );
 }
+
+
+// Cyan Radial Glow Background
+const myStyles = {
+  backgroundImage: `
+          repeating-linear-gradient(45deg, rgba(255, 0, 100, 0.1) 0, rgba(255, 0, 100, 0.1) 1px, transparent 1px, transparent 20px),
+        repeating-linear-gradient(-45deg, rgba(255, 0, 100, 0.1) 0, rgba(255, 0, 100, 0.1) 1px, transparent 1px, transparent 20px)
+        `,
+  backgroundSize: "40px 40px",
+}
+
+

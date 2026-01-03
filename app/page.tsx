@@ -1,6 +1,4 @@
 import { Hero } from "@/components/hero";
-import { Navbar } from "@/components/navbar";
-import { Footer } from "@/components/footer";
 
 export default function Home() {
   return (
@@ -11,11 +9,7 @@ export default function Home() {
         style={myStyles}
       />
       <div className="relative z-10 flex min-h-screen flex-col">
-        <Navbar />
-        <main className="flex-1">
-          <Hero />
-        </main>
-        <Footer />
+        <Hero />
       </div>
     </div>
   );
