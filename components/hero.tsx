@@ -25,28 +25,31 @@ export function Hero() {
             . Make smarter decisions with a simple, beautiful finance tracking
             app.
           </p>
+
+          {/* Action Buttons */}
           <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:justify-center">
-            <Button
-              asChild
-              size="lg"
-              className="gap-2 px-6 py-6 text-base shadow-lg transition sm:px-8 sm:text-lg"
-            >
-              <Link href="/transactions">
+
+            <Link href="/transactions">
+              <Button
+                variant="default"
+                size="lg"
+                className="gap-2 px-6 py-4 text-base shadow-lg transition sm:px-8 sm:text-lg"
+              >
                 Add Transaction
                 <ArrowRight className="h-5 w-5" />
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="gap-2 px-6 py-6 text-base shadow-sm transition sm:px-8 sm:text-lg"
-            >
-              <Link href="#how-it-works">
+              </Button>
+            </Link>
+
+            <Link href="#how-it-works">
+              <Button
+                variant="outline"
+                size="lg"
+                className="gap-2 px-6 py-4 text-base shadow-lg transition sm:px-8 sm:text-lg"
+              >
                 How it Works
                 <TrendingUp className="h-5 w-5" />
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
