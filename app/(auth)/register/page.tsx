@@ -63,10 +63,23 @@ export default function RegisterPage() {
       });
 
       if (result?.error) {
-        setError(result.error);
-      } else {
+        // NextAuth v5 returns different error codes
+        if (result.error === "CredentialsSignin") {
+          setError("Failed to sign in after registration. Please try logging in manually.");
+        } else {
+          setError(result.error === "Configuration" 
+            ? "Authentication configuration error. Please contact support."
+            : result.error);
+        }
+      } else if (result?.ok) {
         router.push("/transactions");
         router.refresh();
+      } else {
+        // Registration succeeded but auto-login failed
+        setError("Account created successfully! Please log in.");
+        setTimeout(() => {
+          router.push("/auth/login");
+        }, 2000);
       }
     } catch (error: any) {
       setError(error.message || "An error occurred during registration");

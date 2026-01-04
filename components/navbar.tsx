@@ -42,7 +42,7 @@ export function Navbar() {
     router.refresh();
   };
 
-  const navItems = status === "authenticated" 
+  const navItems = status === "authenticated"
     ? [...publicNavItems, ...protectedNavItems]
     : publicNavItems;
 
@@ -100,13 +100,13 @@ export function Navbar() {
             ) : (
               <>
                 <Button asChild size="sm" variant="ghost" className="hidden sm:flex">
-                  <Link href="/auth/login">Login</Link>
+                  <Link href="/login">Login</Link>
                 </Button>
                 <Button asChild size="sm" className="hidden sm:flex">
-                  <Link href="/auth/register">Sign Up</Link>
+                  <Link href="/register">Sign Up</Link>
                 </Button>
                 <Button asChild size="sm" variant="ghost" className="sm:hidden">
-                  <Link href="/auth/login">Login</Link>
+                  <Link href="/login">Login</Link>
                 </Button>
               </>
             )}

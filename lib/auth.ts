@@ -20,7 +20,7 @@ export const authOptions: NextAuthConfig = {
             return null;
           }
 
-          const user = await (prisma as any).user.findUnique({
+          const user = await prisma.user.findUnique({
             where: { email: credentials.email },
           });
 
@@ -70,6 +70,13 @@ export const authOptions: NextAuthConfig = {
         session.user.email = token.email as string;
       }
       return session;
+    },
+    async redirect({ url, baseUrl }: any) {
+      // Allow relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Allow callback URLs on the same origin
+      if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
     },
   },
   secret: process.env.NEXTAUTH_SECRET,

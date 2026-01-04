@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,10 +12,14 @@ import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Get callbackUrl from search params
+  const callbackUrl = searchParams.get("callbackUrl") || "/transactions";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,14 +34,35 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        setError(result.error);
+        // NextAuth v5 returns different error codes
+        if (result.error === "CredentialsSignin") {
+          setError("Invalid email or password");
+        } else {
+          setError(result.error === "Configuration"
+            ? "Authentication configuration error. Please contact support."
+            : result.error);
+        }
+        setIsLoading(false);
+      } else if (result?.ok) {
+        // Redirect to callbackUrl or default to /transactions
+        // Decode the callbackUrl if it's URL encoded
+        const redirectTo = callbackUrl && callbackUrl !== "/auth/login"
+          ? decodeURIComponent(callbackUrl)
+          : "/transactions";
+
+        // Ensure it's a valid path
+        const finalRedirect = redirectTo.startsWith("/") ? redirectTo : "/transactions";
+
+        // Use window.location for a full page reload to ensure session is set
+        window.location.href = finalRedirect;
+        return; // Don't set loading to false as we're redirecting
       } else {
-        router.push("/transactions");
-        router.refresh();
+        setError("An unexpected error occurred. Please try again.");
+        setIsLoading(false);
       }
     } catch (error: any) {
+      console.error("Login error:", error);
       setError(error.message || "An error occurred during login");
-    } finally {
       setIsLoading(false);
     }
   };
