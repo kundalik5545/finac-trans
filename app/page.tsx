@@ -2,13 +2,13 @@ import { Hero } from "@/components/hero";
 
 export default function Home() {
   return (
-    <div className="min-h-screen w-full bg-[#f8fafc] relative flex flex-col">
+    <div className="h-[84vh] w-full relative flex flex-col">
       {/* Soft Morning Mist Background */}
       <div
         className="absolute inset-0 z-0"
         style={myStyles}
       />
-      <div className="relative z-10 flex min-h-screen flex-col">
+      <div className="relative z-10 flex flex-col">
         <Hero />
       </div>
     </div>

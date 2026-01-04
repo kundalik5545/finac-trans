@@ -14,66 +14,40 @@ import {
 } from "@/components/ui/card";
 import { AlertCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { authClient } from "@/lib/auth-client";
 
 export default function LoginPage() {
     const router = useRouter();
-    const searchParams = useSearchParams();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
-    // Get callbackUrl from search params or default
-    const callbackUrl = searchParams.get("callbackUrl") || "/transactions";
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError("");
         setIsLoading(true);
 
         try {
-            const result = await authClient.signIn.emailAndPassword(
-                {
-                    email,
-                    password,
-                    callbackURL: process.env.NEXT_PUBLIC_BASE_URL,
-                },
-                {
-                    onRequest: () => { },
-                    onSuccess: (ctx) => {
-                        // Redirect to callbackUrl or default to /transactions
-                        const redirectTo =
-                            callbackUrl && callbackUrl !== "/auth/login"
-                                ? decodeURIComponent(callbackUrl)
-                                : "/transactions";
-                        const finalRedirect = redirectTo.startsWith("/")
-                            ? redirectTo
-                            : "/transactions";
-                        // Full page reload to ensure session is set
-                        window.location.href = finalRedirect;
-                    },
-                    onError: (ctx) => {
-                        if (
-                            ctx.error?.name === "InvalidCredentials" ||
-                            ctx.error?.code === "INVALID_CREDENTIALS"
-                        ) {
-                            setError("Invalid email or password");
-                        } else {
-                            setError(
-                                ctx.error?.message ||
-                                "An error occurred during login. Please try again."
-                            );
-                        }
-                        setIsLoading(false);
-                    },
-                }
-            );
+            const result = await authClient.signIn.email({
+                email,
+                password,
+            });
+
+            if (result.error) {
+                setError(result.error.message || "Failed to sign in");
+            } else {
+                router.push("/transactions");
+                router.refresh();
+            }
         } catch (err: any) {
-            console.error("Login error:", err);
-            setError(err?.message || "An error occurred during login");
+            setError(err.message || "An error occurred during sign in");
+        } finally {
             setIsLoading(false);
         }
     };
+
 
     return (
         <Card className="w-full max-w-md">
@@ -132,7 +106,7 @@ export default function LoginPage() {
                     <div className="text-center text-sm text-muted-foreground">
                         Don't have an account?{" "}
                         <Link
-                            href="/auth/register"
+                            href="/register"
                             className="text-primary hover:underline"
                         >
                             Sign up

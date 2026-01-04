@@ -1,11 +1,10 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Wallet, LogOut, User } from "lucide-react";
+import { Wallet, User } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { authClient } from "@/lib/auth-client";
-import { redirect } from "next/navigation";
+import { LogoutButton, LogoutButtonIcon } from "@/components/logout-button";
 
 
 export async function Navbar() {
@@ -41,12 +40,9 @@ export async function Navbar() {
       href: "/upload",
     },
   ];
-  const handleLogout = async () => {
-    await authClient.signOut();
-    redirect("/");
-  };
 
-  const navItems = session?.user ? [...publicNavItems, ...protectedNavItems] : publicNavItems;
+  // If user is authenticated, show protected nav items, otherwise show public nav items
+  const navItems = session?.user ? protectedNavItems : publicNavItems;
 
 
   return (
@@ -82,23 +78,8 @@ export async function Navbar() {
                     {session?.user?.name || session?.user?.email}
                   </span>
                 </div>
-                <Button
-                  onClick={handleLogout}
-                  variant="outline"
-                  size="sm"
-                  className="hidden sm:flex"
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
-                </Button>
-                <Button
-                  onClick={handleLogout}
-                  variant="ghost"
-                  size="sm"
-                  className="sm:hidden"
-                >
-                  <LogOut className="h-4 w-4" />
-                </Button>
+                <LogoutButton className="hidden sm:flex" />
+                <LogoutButtonIcon className="sm:hidden" />
               </>
             ) : (
               <>

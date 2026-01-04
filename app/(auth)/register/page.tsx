@@ -1,86 +1,150 @@
 "use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertCircle, Loader2, CheckCircle2 } from "lucide-react";
+import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
-import { redirect } from "next/navigation";
-import React, { useState } from "react";
 
-const SignUpPage = () => {
+export default function RegisterPage() {
+    const router = useRouter();
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // handle signup logic here
-        console.log({ name, email, password });
-        const { data, error } = await authClient.signUp.email(
-            {
-                name: name,
-                email: email,
-                password: password,
-                callbackURL: process.env.NEXT_PUBLIC_BASE_URL,
-            },
-            {
-                onRequest: (ctx) => {
-                    //show loading
-                    console.log("Signing up...");
-                },
-                onSuccess: (ctx) => {
-                    //redirect to the dashboard or sign in page
-                    console.log("Signed up successfully!");
-                    redirect("/dashboard");
-                },
-                onError: (ctx) => {
-                    console.log("Error signing up:", ctx.error.message);
-                },
-            }
-        );
+        setError("");
 
+        if (password !== confirmPassword) {
+            setError("Passwords do not match");
+            return;
+        }
+
+        if (password.length < 6) {
+            setError("Password must be at least 6 characters long");
+            return;
+        }
+
+        setIsLoading(true);
+
+        try {
+            const result = await authClient.signUp.email({
+                email,
+                password,
+                name,
+            });
+
+            if (result.error) {
+                setError(result.error.message || "Failed to sign up");
+            } else {
+                router.push("/dashboard");
+                router.refresh();
+            }
+        } catch (err: any) {
+            setError(err.message || "An error occurred during sign up");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center">
-            <form
-                onSubmit={handleSubmit}
-                className="flex flex-col space-y-4 border p-6 rounded w-80"
-            >
-                <h1 className="text-2xl font-bold mb-4">Sign Up</h1>
-                <Label className="flex items-center justify-between space-y-2">
-                    <span>Name</span>
-                    <Input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                        className="w-40"
-                    />
-                </Label>
-                <Label className="flex items-center justify-between space-y-2">
-                    <span>Email</span>
-                    <Input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        className="w-40"
-                    />
-                </Label>
-                <Label className="flex items-center justify-between space-y-2 ">
-                    <span>Password</span>
-                    <Input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        className="w-40"
-                    />
-                </Label>
-                <Button type="submit">Sign Up</Button>
-            </form>
-        </div>
-    );
-};
+        <Card className="w-full max-w-md">
+            <CardHeader>
+                <CardTitle>Create Account</CardTitle>
+                <CardDescription>Sign up to start tracking your finances</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    {error && (
+                        <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive flex items-center gap-2">
+                            <AlertCircle className="h-4 w-4" />
+                            {error}
+                        </div>
+                    )}
 
-export default SignUpPage;
+                    <div className="space-y-2">
+                        <Label htmlFor="name">Name</Label>
+                        <Input
+                            id="name"
+                            type="text"
+                            placeholder="John Doe"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                            disabled={isLoading}
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="email">Email</Label>
+                        <Input
+                            id="email"
+                            type="email"
+                            placeholder="you@example.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            disabled={isLoading}
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="password">Password</Label>
+                        <Input
+                            id="password"
+                            type="password"
+                            placeholder="••••••••"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            minLength={6}
+                            disabled={isLoading}
+                        />
+                        <p className="text-xs text-muted-foreground">
+                            Must be at least 6 characters
+                        </p>
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="confirmPassword">Confirm Password</Label>
+                        <Input
+                            id="confirmPassword"
+                            type="password"
+                            placeholder="••••••••"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            required
+                            disabled={isLoading}
+                        />
+                    </div>
+
+                    <Button type="submit" className="w-full" disabled={isLoading}>
+                        {isLoading ? (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Creating account...
+                            </>
+                        ) : (
+                            "Create Account"
+                        )}
+                    </Button>
+
+                    <div className="text-center text-sm text-muted-foreground">
+                        Already have an account?{" "}
+                        <Link href="/login" className="text-primary hover:underline">
+                            Sign in
+                        </Link>
+                    </div>
+                </form>
+            </CardContent>
+        </Card>
+    );
+}

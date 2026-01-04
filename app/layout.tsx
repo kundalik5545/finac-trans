@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.className} absolute inset-0 z-0 antialiased`}
+        className={`${inter.className} absolute inset-0 z-0 antialiased  `}
         style={myStyles}
       >
         <Navbar />
