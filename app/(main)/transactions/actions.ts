@@ -2,8 +2,14 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { getCurrentUserId } from "@/lib/get-session";
 
 export async function createTransaction(formData: FormData) {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
   const amount = formData.get("amount");
   const date = formData.get("date");
   const description = formData.get("description");
@@ -33,6 +39,7 @@ export async function createTransaction(formData: FormData) {
           : null,
         categoryId: categoryId ? (categoryId as string) : null,
         subCategoryId: subCategoryId ? (subCategoryId as string) : null,
+        userId,
       },
     });
 
@@ -44,8 +51,16 @@ export async function createTransaction(formData: FormData) {
 }
 
 export async function getCategories() {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    return [];
+  }
+
   try {
     return await prisma.category.findMany({
+      where: {
+        userId,
+      },
       include: {
         subCategories: true,
       },
@@ -60,14 +75,26 @@ export async function getCategories() {
 }
 
 export async function getTransaction(id: string) {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    return null;
+  }
+
   try {
-    return await prisma.transaction.findUnique({
+    const transaction = await prisma.transaction.findUnique({
       where: { id },
       include: {
         category: true,
         subCategory: true,
       },
     });
+
+    // Verify ownership
+    if (transaction && transaction.userId !== userId) {
+      return null;
+    }
+
+    return transaction;
   } catch (error) {
     console.error("Error fetching transaction:", error);
     return null;
@@ -75,6 +102,11 @@ export async function getTransaction(id: string) {
 }
 
 export async function updateTransaction(id: string, formData: FormData) {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
   const amount = formData.get("amount");
   const date = formData.get("date");
   const description = formData.get("description");
@@ -90,6 +122,15 @@ export async function updateTransaction(id: string, formData: FormData) {
   }
 
   try {
+    // Verify ownership before updating
+    const existingTransaction = await prisma.transaction.findUnique({
+      where: { id },
+    });
+
+    if (!existingTransaction || existingTransaction.userId !== userId) {
+      throw new Error("Unauthorized");
+    }
+
     await prisma.transaction.update({
       where: { id },
       data: {
@@ -117,7 +158,21 @@ export async function updateTransaction(id: string, formData: FormData) {
 }
 
 export async function deleteTransaction(id: string) {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
   try {
+    // Verify ownership before deleting
+    const existingTransaction = await prisma.transaction.findUnique({
+      where: { id },
+    });
+
+    if (!existingTransaction || existingTransaction.userId !== userId) {
+      throw new Error("Unauthorized");
+    }
+
     await prisma.transaction.delete({
       where: { id },
     });
@@ -130,11 +185,27 @@ export async function deleteTransaction(id: string) {
 }
 
 export async function getTransactions(page: number = 1, pageSize: number = 10) {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    return {
+      transactions: [],
+      pagination: {
+        page: 1,
+        pageSize,
+        total: 0,
+        totalPages: 0,
+      },
+    };
+  }
+
   try {
     const skip = (page - 1) * pageSize;
     
     const [transactions, total] = await Promise.all([
       prisma.transaction.findMany({
+        where: {
+          userId,
+        },
         skip,
         take: pageSize,
         include: {
@@ -145,7 +216,11 @@ export async function getTransactions(page: number = 1, pageSize: number = 10) {
           date: "desc",
         },
       }),
-      prisma.transaction.count(),
+      prisma.transaction.count({
+        where: {
+          userId,
+        },
+      }),
     ]);
 
     return {
@@ -172,8 +247,16 @@ export async function getTransactions(page: number = 1, pageSize: number = 10) {
 }
 
 export async function getAllTransactions() {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    return [];
+  }
+
   try {
     return await prisma.transaction.findMany({
+      where: {
+        userId,
+      },
       include: {
         category: true,
         subCategory: true,

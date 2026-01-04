@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { Providers } from "@/components/providers";
 
 
 
@@ -27,11 +28,13 @@ export default function RootLayout({
         className={`${inter.className} absolute inset-0 z-0 antialiased`}
         style={myStyles}
       >
-        <Navbar />
-        <main className="">
-          {children}
-        </main>
-        <Footer />
+        <Providers>
+          <Navbar />
+          <main className="">
+            {children}
+          </main>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );

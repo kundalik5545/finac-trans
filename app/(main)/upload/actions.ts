@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import * as XLSX from "xlsx";
 import { validateExcelData, ModelType, ValidationResult } from "@/lib/validate-excel";
+import { getCurrentUserId } from "@/lib/get-session";
 
 export async function uploadExcelData(
   formData: FormData
@@ -58,18 +59,27 @@ export async function uploadExcelData(
       };
     }
 
+    // Get current user ID
+    const userId = await getCurrentUserId();
+    if (!userId) {
+      return {
+        success: false,
+        message: "Unauthorized. Please log in to upload data.",
+      };
+    }
+
     // Insert data based on model type
     let insertedCount = 0;
 
     switch (modelType) {
       case "Transaction":
-        insertedCount = await insertTransactions(validation.data);
+        insertedCount = await insertTransactions(validation.data, userId);
         break;
       case "Category":
-        insertedCount = await insertCategories(validation.data);
+        insertedCount = await insertCategories(validation.data, userId);
         break;
       case "SubCategory":
-        insertedCount = await insertSubCategories(validation.data);
+        insertedCount = await insertSubCategories(validation.data, userId);
         break;
     }
 
@@ -91,27 +101,31 @@ export async function uploadExcelData(
   }
 }
 
-async function insertTransactions(data: any[]): Promise<number> {
+async function insertTransactions(data: any[], userId: string): Promise<number> {
   let insertedCount = 0;
 
   for (const item of data) {
     try {
-      // Find category by name if provided
+      // Find category by name if provided (must belong to user)
       let categoryId = null;
       if (item.categoryName) {
-        const category = await prisma.category.findUnique({
-          where: { name: item.categoryName },
+        const category = await prisma.category.findFirst({
+          where: {
+            name: item.categoryName,
+            userId,
+          },
         });
         categoryId = category?.id || null;
       }
 
-      // Find subcategory by name and category if provided
+      // Find subcategory by name and category if provided (must belong to user)
       let subCategoryId = null;
       if (item.subCategoryName && categoryId) {
         const subCategory = await prisma.subCategory.findFirst({
           where: {
             name: item.subCategoryName,
             categoryId: categoryId,
+            userId,
           },
         });
         subCategoryId = subCategory?.id || null;
@@ -128,6 +142,7 @@ async function insertTransactions(data: any[]): Promise<number> {
           bankAccountName: item.bankAccountName,
           categoryId: categoryId,
           subCategoryId: subCategoryId,
+          userId,
         },
       });
 
@@ -141,7 +156,7 @@ async function insertTransactions(data: any[]): Promise<number> {
   return insertedCount;
 }
 
-async function insertCategories(data: any[]): Promise<number> {
+async function insertCategories(data: any[], userId: string): Promise<number> {
   let insertedCount = 0;
 
   for (const item of data) {
@@ -150,13 +165,14 @@ async function insertCategories(data: any[]): Promise<number> {
         data: {
           name: item.name,
           description: item.description,
+          userId,
         },
       });
       insertedCount++;
     } catch (error: any) {
       // Skip if category already exists (unique constraint)
       if (error.code === "P2002") {
-        console.log(`Category "${item.name}" already exists, skipping`);
+        console.log(`Category "${item.name}" already exists for this user, skipping`);
       } else {
         console.error(`Error inserting category:`, error);
       }
@@ -166,18 +182,21 @@ async function insertCategories(data: any[]): Promise<number> {
   return insertedCount;
 }
 
-async function insertSubCategories(data: any[]): Promise<number> {
+async function insertSubCategories(data: any[], userId: string): Promise<number> {
   let insertedCount = 0;
 
   for (const item of data) {
     try {
-      // Find category by name
-      const category = await prisma.category.findUnique({
-        where: { name: item.categoryName },
+      // Find category by name (must belong to user)
+      const category = await prisma.category.findFirst({
+        where: {
+          name: item.categoryName,
+          userId,
+        },
       });
 
       if (!category) {
-        console.error(`Category "${item.categoryName}" not found, skipping subcategory "${item.name}"`);
+        console.error(`Category "${item.categoryName}" not found for this user, skipping subcategory "${item.name}"`);
         continue;
       }
 
@@ -186,6 +205,7 @@ async function insertSubCategories(data: any[]): Promise<number> {
           name: item.name,
           description: item.description,
           categoryId: category.id,
+          userId,
         },
       });
       insertedCount++;

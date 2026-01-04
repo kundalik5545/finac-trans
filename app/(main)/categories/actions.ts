@@ -2,8 +2,14 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { getCurrentUserId } from "@/lib/get-session";
 
 export async function createCategory(formData: FormData) {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
   const name = formData.get("name");
   const description = formData.get("description");
 
@@ -16,6 +22,7 @@ export async function createCategory(formData: FormData) {
       data: {
         name: name as string,
         description: description ? (description as string) : null,
+        userId,
       },
     });
 
@@ -27,6 +34,11 @@ export async function createCategory(formData: FormData) {
 }
 
 export async function updateCategory(id: string, formData: FormData) {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
   const name = formData.get("name");
   const description = formData.get("description");
 
@@ -35,6 +47,15 @@ export async function updateCategory(id: string, formData: FormData) {
   }
 
   try {
+    // Verify ownership
+    const existingCategory = await prisma.category.findUnique({
+      where: { id },
+    });
+
+    if (!existingCategory || existingCategory.userId !== userId) {
+      throw new Error("Unauthorized");
+    }
+
     await prisma.category.update({
       where: { id },
       data: {
@@ -51,7 +72,21 @@ export async function updateCategory(id: string, formData: FormData) {
 }
 
 export async function deleteCategory(id: string) {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
   try {
+    // Verify ownership
+    const existingCategory = await prisma.category.findUnique({
+      where: { id },
+    });
+
+    if (!existingCategory || existingCategory.userId !== userId) {
+      throw new Error("Unauthorized");
+    }
+
     await prisma.category.delete({
       where: { id },
     });
@@ -64,6 +99,11 @@ export async function deleteCategory(id: string) {
 }
 
 export async function createSubCategory(formData: FormData) {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
   const name = formData.get("name");
   const description = formData.get("description");
   const categoryId = formData.get("categoryId");
@@ -73,11 +113,21 @@ export async function createSubCategory(formData: FormData) {
   }
 
   try {
+    // Verify category ownership
+    const category = await prisma.category.findUnique({
+      where: { id: categoryId as string },
+    });
+
+    if (!category || category.userId !== userId) {
+      throw new Error("Unauthorized");
+    }
+
     await prisma.subCategory.create({
       data: {
         name: name as string,
         description: description ? (description as string) : null,
         categoryId: categoryId as string,
+        userId,
       },
     });
 
@@ -89,6 +139,11 @@ export async function createSubCategory(formData: FormData) {
 }
 
 export async function updateSubCategory(id: string, formData: FormData) {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
   const name = formData.get("name");
   const description = formData.get("description");
   const categoryId = formData.get("categoryId");
@@ -98,6 +153,24 @@ export async function updateSubCategory(id: string, formData: FormData) {
   }
 
   try {
+    // Verify ownership
+    const existingSubCategory = await prisma.subCategory.findUnique({
+      where: { id },
+    });
+
+    if (!existingSubCategory || existingSubCategory.userId !== userId) {
+      throw new Error("Unauthorized");
+    }
+
+    // Verify category ownership
+    const category = await prisma.category.findUnique({
+      where: { id: categoryId as string },
+    });
+
+    if (!category || category.userId !== userId) {
+      throw new Error("Unauthorized");
+    }
+
     await prisma.subCategory.update({
       where: { id },
       data: {
@@ -115,7 +188,21 @@ export async function updateSubCategory(id: string, formData: FormData) {
 }
 
 export async function deleteSubCategory(id: string) {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
   try {
+    // Verify ownership
+    const existingSubCategory = await prisma.subCategory.findUnique({
+      where: { id },
+    });
+
+    if (!existingSubCategory || existingSubCategory.userId !== userId) {
+      throw new Error("Unauthorized");
+    }
+
     await prisma.subCategory.delete({
       where: { id },
     });
@@ -128,8 +215,16 @@ export async function deleteSubCategory(id: string) {
 }
 
 export async function getCategories() {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    return [];
+  }
+
   try {
     return await prisma.category.findMany({
+      where: {
+        userId,
+      },
       include: {
         subCategories: {
           orderBy: {
@@ -148,13 +243,25 @@ export async function getCategories() {
 }
 
 export async function getCategory(id: string) {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    return null;
+  }
+
   try {
-    return await prisma.category.findUnique({
+    const category = await prisma.category.findUnique({
       where: { id },
       include: {
         subCategories: true,
       },
     });
+
+    // Verify ownership
+    if (category && category.userId !== userId) {
+      return null;
+    }
+
+    return category;
   } catch (error) {
     console.error("Error fetching category:", error);
     return null;
@@ -162,13 +269,25 @@ export async function getCategory(id: string) {
 }
 
 export async function getSubCategory(id: string) {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    return null;
+  }
+
   try {
-    return await prisma.subCategory.findUnique({
+    const subCategory = await prisma.subCategory.findUnique({
       where: { id },
       include: {
         category: true,
       },
     });
+
+    // Verify ownership
+    if (subCategory && subCategory.userId !== userId) {
+      return null;
+    }
+
+    return subCategory;
   } catch (error) {
     console.error("Error fetching sub-category:", error);
     return null;
