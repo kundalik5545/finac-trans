@@ -1,31 +1,54 @@
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Wallet } from "lucide-react";
+import { Wallet, LogOut, User } from "lucide-react";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { authClient } from "@/lib/auth-client";
+import { redirect } from "next/navigation";
 
-export function Navbar() {
-  const navItems = [
+
+export async function Navbar() {
+  // Get session to check authentication status
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+
+
+  const publicNavItems = [
     {
       label: "Home",
       href: "/",
     },
     {
-      label: "Transactions",
-      href: "/transactions",
-    },
-
-    {
-      label: "Categories",
-      href: "/categories",
-    }, {
-      label: "Upload",
-      href: "/upload",
-    },
-    {
       label: "About",
       href: "/about",
     },
+  ];
 
-  ]
+  const protectedNavItems = [
+    {
+      label: "Transactions",
+      href: "/transactions",
+    },
+    {
+      label: "Categories",
+      href: "/categories",
+    },
+    {
+      label: "Upload",
+      href: "/upload",
+    },
+  ];
+  const handleLogout = async () => {
+    await authClient.signOut();
+    redirect("/");
+  };
+
+  const navItems = session?.user ? [...publicNavItems, ...protectedNavItems] : publicNavItems;
+
+
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -49,15 +72,47 @@ export function Navbar() {
             ))}
           </div>
 
-          {/* CTA Button */}
+          {/* Auth Section */}
           <div className="flex items-center space-x-4">
-            <Button asChild size="sm" className="hidden sm:flex">
-              <Link href="/transactions">Get Started</Link>
-            </Button>
-            {/* Mobile menu button - can be enhanced later */}
-            <Button asChild size="sm" variant="ghost" className="md:hidden">
-              <Link href="/transactions">Menu</Link>
-            </Button>
+            {session?.user ? (
+              <>
+                <div className="hidden items-center gap-2 sm:flex">
+                  <User className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">
+                    {session?.user?.name || session?.user?.email}
+                  </span>
+                </div>
+                <Button
+                  onClick={handleLogout}
+                  variant="outline"
+                  size="sm"
+                  className="hidden sm:flex"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Logout
+                </Button>
+                <Button
+                  onClick={handleLogout}
+                  variant="ghost"
+                  size="sm"
+                  className="sm:hidden"
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button asChild size="sm" variant="ghost" className="hidden sm:flex">
+                  <Link href="/login">Login</Link>
+                </Button>
+                <Button asChild size="sm" className="hidden sm:flex">
+                  <Link href="/register">Sign Up</Link>
+                </Button>
+                <Button asChild size="sm" variant="ghost" className="sm:hidden">
+                  <Link href="/login">Login</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>
